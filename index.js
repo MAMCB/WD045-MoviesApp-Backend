@@ -34,7 +34,7 @@ const validateField = [
         check("year").exists(),
         check("rating").exists(),
         check("poster").exists(),
-        check("trailer").exists(),
+        check("trailer").exists(),]),
         (req,res,next)=>{
             const errors = validationResult(req);
             if(!errors.isEmpty())
@@ -43,7 +43,7 @@ const validateField = [
             }
             next();
         }
-    ])
+    
 ]
 
 
@@ -87,7 +87,7 @@ app.post("/api/movies",validateRequestBody,(req,res)=>{
 
 })
 
-app.put("/api/movies/:id",checkValidId,(req,res)=>{
+app.put("/api/movies/:id",checkValidId,validateField,(req,res)=>{
     
     if(req.body.title)
     {
@@ -172,6 +172,14 @@ app.put("/api/movies/:id",checkValidId,(req,res)=>{
           });
 
     }
+})
+
+app.delete("/api/movies/:id",checkValidId,(req,res)=>{
+  pool.query("DELETE FROM movies WHERE id=$1 RETURNING *;",[req.params.id]).then(data=>{
+    res.status(201).json(data.rows[0]);
+  }).catch(e=>{
+    res.status(500).json({message:e.message});
+  })
 })
 
 
