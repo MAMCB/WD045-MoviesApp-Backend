@@ -50,7 +50,7 @@ const validateField = [
 
 const checkValidId = (req,res,next)=>{
     const id = req.params.id;
-    pool.query("SELECT * FROM movies WHERE id = $1;",[id]).then(data=>data.rows.length>0&&next()).catch(e=>{
+    pool.query("SELECT * FROM movies WHERE id = $1;",[id]).then(data=>data.rows.length>0?next():res.status(404).send("Movie not found")).catch(e=>{
         res.status(500).json({message:e.message});
     })
 }
