@@ -67,7 +67,7 @@ app.get("/api/movies",(req,res)=>{
     });
 })
 
-app.get("/api/movies/:id",(req,res)=>{
+app.get("/api/movies/:id",checkValidId,(req,res)=>{
     const id = req.params.id;
     pool.query("SELECT * FROM movies WHERE id=$1;",[id]).then(data=>{
         res.json(data.rows[0]);
