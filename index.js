@@ -82,7 +82,7 @@ app.get("/api/movies/:id",checkValidId,(req,res)=>{
 
 app.post("/api/movies",validateRequestBody,(req,res)=>{
     const {title,director,year,rating,genre,description,poster,trailer} = req.body;
-    pool.query("INSERT INTO movies (title,director,year,rating,poster,trailer,genre,description) VALUES($1,$2,$3,$4,$5,$6) RETURNING *;",[title,director,year,rating,poster,trailer,genre,description]).then(data=>{
+    pool.query("INSERT INTO movies (title,director,year,rating,poster,trailer,genre,description) VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *;",[title,director,year,rating,poster,trailer,genre,description]).then(data=>{
         res.status(201).json(data.rows[0]);
     }).catch(e=>{
         res.status(500).json({message:e.message});
