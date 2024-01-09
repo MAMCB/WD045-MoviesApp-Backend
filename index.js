@@ -15,6 +15,8 @@ const validateRequestBody = [
     check("director").isString(),
     check("year").isInt(),
     check("rating").isInt(),
+    check("genre").isString(),
+    check("description").isString(),
     check("poster").isString(),
     check("trailer").isString(),
     (req,res,next)=>{
@@ -33,6 +35,8 @@ const validateField = [
         check("director").exists(),
         check("year").exists(),
         check("rating").exists(),
+        check("genre").exists(),
+        check("description").exists(),
         check("poster").exists(),
         check("trailer").exists(),]),
         (req,res,next)=>{
@@ -77,8 +81,8 @@ app.get("/api/movies/:id",checkValidId,(req,res)=>{
 })
 
 app.post("/api/movies",validateRequestBody,(req,res)=>{
-    const {title,director,year,rating,poster,trailer} = req.body;
-    pool.query("INSERT INTO movies (title,director,year,rating,poster,trailer) VALUES($1,$2,$3,$4,$5,$6) RETURNING *;",[title,director,year,rating,poster,trailer]).then(data=>{
+    const {title,director,year,rating,genre,description,poster,trailer} = req.body;
+    pool.query("INSERT INTO movies (title,director,year,rating,poster,trailer,genre,description) VALUES($1,$2,$3,$4,$5,$6) RETURNING *;",[title,director,year,rating,poster,trailer,genre,description]).then(data=>{
         res.status(201).json(data.rows[0]);
     }).catch(e=>{
         res.status(500).json({message:e.message});
@@ -171,6 +175,34 @@ app.put("/api/movies/:id",checkValidId,validateField,(req,res)=>{
             res.status(500).json({ message: e.message });
           });
 
+    }
+    else if(req.body.genre)
+    {
+      pool
+        .query("UPDATE movies SET genre=$1 WHERE id=$2 RETURNING *;", [
+          req.body.genre,
+          req.params.id,
+        ])
+        .then((data) => {
+          res.status(201).json(data.rows[0]);
+        })
+        .catch((e) => {
+          res.status(500).json({ message: e.message });
+        });
+    }
+    else if (req.body.description)
+    {
+       pool
+         .query("UPDATE movies SET description=$1 WHERE id=$2 RETURNING *;", [
+           req.body.description,
+           req.params.id,
+         ])
+         .then((data) => {
+           res.status(201).json(data.rows[0]);
+         })
+         .catch((e) => {
+           res.status(500).json({ message: e.message });
+         });
     }
 })
 
