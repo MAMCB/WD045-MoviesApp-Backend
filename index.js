@@ -64,11 +64,26 @@ app.get("/",(req,res)=>{
 })
 
 app.get("/api/movies",(req,res)=>{
-    pool.query("SELECT * FROM movies;").then(data=>{
+  if(req.query.title)
+  {
+      pool.query("SELECT * FROM movies WHERE title ILIKE $1;",[req.query.title]).then(data=>{
+          res.json(data.rows);
+      }).catch(e=>{
+          res.status(500).json({message:e.message});
+      })
+  }
+  else{
+    pool
+      .query("SELECT * FROM movies;")
+      .then((data) => {
         res.json(data.rows);
-    }).catch(e=>{
-        res.status(500).json({message:e.message});
-    });
+      })
+      .catch((e) => {
+        res.status(500).json({ message: e.message });
+      });
+
+  }
+    
 })
 
 app.get("/api/movies/:id",checkValidId,(req,res)=>{
