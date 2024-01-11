@@ -65,8 +65,8 @@ app.get("/",(req,res)=>{
 
 app.get("/api/movies",(req,res)=>{
   if(req.query.title)
-  {
-      pool.query("SELECT * FROM movies WHERE title ILIKE $1;",[req.query.title]).then(data=>{
+  {const query = "%" +req.query.title +"%";
+      pool.query("SELECT * FROM movies WHERE title ILIKE $1;",[query]).then(data=>{
           res.json(data.rows);
       }).catch(e=>{
           res.status(500).json({message:e.message});
